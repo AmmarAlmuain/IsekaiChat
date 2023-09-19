@@ -34,7 +34,8 @@
 <script setup lang="ts">
 
     //@ts-ignore
-    import { toast } from 'vue3-toastify';
+    import previousTuesday from 'date-fns/esm/previousTuesday';
+import { toast } from 'vue3-toastify';
     import 'vue3-toastify/dist/index.css';
 
     definePageMeta({
@@ -77,9 +78,18 @@
                 method: 'POST',
                 headers: { "token": `${response.value}` }
             })
+            const { data: posts, error }: any = await useFetch('/api/post/entirely', {
+                method: 'POST',
+                headers: { token: `${response.value}` }
+            })
             if(user) {
                 useState("user", () => {
                     return user
+                })
+            }
+            if(posts) {
+                useState("posts", () => {
+                    return posts
                 })
             }
             inProcess.value = false
