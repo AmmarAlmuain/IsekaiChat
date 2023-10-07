@@ -26,6 +26,8 @@ export default async () => {
         }
     });
 
+    console.log(io)
+
     const changeStream = Post.watch()
     
     io.on("connection", (socket) => {
