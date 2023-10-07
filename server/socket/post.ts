@@ -26,7 +26,7 @@ export default async () => {
         }
     });
 
-    console.log(io)
+    console.log(io.server.url)
 
     const changeStream = Post.watch()
     
