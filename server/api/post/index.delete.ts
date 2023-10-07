@@ -7,10 +7,9 @@ export default defineEventHandler(async (event) => {
   const user = await User.findOne({ email: event.context.user.email });
   if ((String(post?.userId), String(user?._id))) {
     const updatedPost = await Post.deleteOne({ slug });
-    event.node.res.statusCode = 200;
     return "Post deleted successful.";
   } else {
-    event.node.res.statusCode = 403;
+    setResponseStatus(event, 403)
     return "You are not authorized to modify this post. You are not the owner of it.";
   }
 });

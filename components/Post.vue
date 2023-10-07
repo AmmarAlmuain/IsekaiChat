@@ -8,7 +8,7 @@
                 </div>
                 <div class="user-username-and-time-side flex flex-col justify-center items-start">
                     <h5 class="text-base font-medium"> {{ props.user.username}} </h5>
-                    <p class="text-sm font-light text-white/50"> {{ postDate }} </p>
+                    <p class="text-sm font-light text-white/50"> {{ formatDate(props.post.createdAt) }} </p>
                 </div>
             </div>
             <div v-if="user.email == props.user.email"> 
@@ -17,18 +17,17 @@
                         <IconsThreeDot />
                     </label>
                     <ul tabindex="0"
-                        class="dropdown-content z-[1] menu mt-6 shadow bg-[#1c1c1c] border border-white/10 rounded-md w-52" :class="inDeletionProcess ? 'flex justify-center items-center' : ''">
-                        <li v-if="!inDeletionProcess" @click="deletePost(props.slug)"><a> Delete </a></li>
-                        <li v-else> <span  :class="inDeletionProcess ? 'loading loading-ring loading-xs' : ''"></span> </li>
+                        class="dropdown-content z-[1] menu mt-6 shadow bg-[#1c1c1c] border border-white/10 rounded-md w-52">
+                        <li @click="() => { deletePost(props.post.slug) }"><div class="flex justify-center items-center"> <span id="delete-post-process"> Delete </span> </div></li>
                     </ul>
                 </div>
             </div>
         </div>
-        <div class="post-content text-sm text-white pt-4 px-3 w-full text-left" :class="props.media ? '' : 'pb-2'">
-            {{  props.content }}
+        <div class="post-content text-sm text-white pt-4 px-3 w-full text-left" :class="props.post.media ? '' : 'pb-2'">
+            {{  props.post.content }}
         </div>
-        <div class="post-media pt-4" v-if="props.media">
-            <img :src="props.media" alt="post-media" class="" />
+        <div class="post-media pt-4" v-if="props.post.media">
+            <img :src="props.post.media" alt="post-media" class="" />
         </div>
         <div class="post-add-comment w-full h-12 flex justify-center items-center my-2 border-t border-b border-white/10">
             <div class="comment-user-pfp px-4 h-full flex justify-center items-center border-r border-white/10">
@@ -39,30 +38,26 @@
                 <input type="text"
                     class="w-full h-8 bg-transparent text-sm px-4 outline-none border-none placeholder:text-white/30"
                     placeholder="Add your comment..." v-model="commentContent">
-                <button v-if="!isLiked" @click="checkAdmireStatus(props.slug)"
+                <button v-if="!isAdmired" @click="manageAdmireFunctionResponse(props.post.slug)"
                     class="heart-btn rounded-md cursor-pointer flex justify-start px-4 items-center hover:text-emerald-400 transition-all duration-300">
                     <IconsHeart />
                 </button>
-                <button v-else @click="checkAdmireStatus(props.slug)"
-                    class="heart-btn rounded-md cursor-pointer flex justify-start px-4 text-transparent items-center">
+                <button v-else @click="manageAdmireFunctionResponse(props.post.slug)"
+                    class="heart-btn-active rounded-md cursor-pointer flex justify-start px-4 text-transparent items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#34d399"
                         class="w-4 h-4">
                         <path stroke-linecap="round" stroke-linejoin="round" fill="#34d399" 
                             d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                     </svg>
                 </button>
-                <button v-if="!inCommentProcess"
+                <button
                     class="up-right-arrow-btn rounded-md cursor-pointer flex justify-start px-4 items-center hover:text-emerald-400 transition-all duration-300">
-                    <IconsUpRightArrow @click="createComment(commentContent, props.slug)"/>
-                </button>
-                <button v-else
-                    class="loading-btn rounded-md cursor-pointer flex justify-start px-4 items-center hover:text-emerald-400 transition-all duration-300">
-                    <span :class="inCommentProcess ? 'loading loading-ring loading-xs' : ''"></span>
+                    <span id="create-comment-process"> <IconsUpRightArrow @click="comment(commentContent, props.post.slug)"/> </span>
                 </button>
             </div>
         </div>
         <div class="all-comments w-full px-3 h-full">
-            <div class="comment w-full gap-x-2 h-full items-stretch flex justify-center text-left py-2" v-for="comment in props.comments">
+            <div class="comment w-full gap-x-2 h-full items-stretch flex justify-center text-left py-2" v-for="comment in props.post.comments">
                 <div class="w-6 h-full flex justify-start items-center">
                     <img :src="comment.userId.profileImage"
                         alt="commented-user-pfp" class="w-6 h-6 rounded-full min-w-fit">
@@ -81,54 +76,25 @@
 
 <script setup lang="ts">
 
-    import Cookies from "js-cookie";
-    //@ts-ignore
-    import { toast } from 'vue3-toastify';
-    import 'vue3-toastify/dist/index.css';
-    //@ts-ignore
-    import { parseISO, formatDistanceToNow } from 'date-fns';
-
     const user: any = useState("user")
-    const posts: any = useState("posts")
-
+    const { delete: deletePost, comment, manageAdmire } = new usePost()
+    let isAdmired = ref(manageAdmireStatus()),
+        commentContent: string;
+    
     const props = defineProps({
         user: {
             type: Object,
             required: true
         },
-        comments: {
+        post: {
             type: Object,
-            required: true
-        },
-        media: String,
-        content: {
-            type: String,
-            required: true
-        },
-        date: {
-            type: String,
-            required: true
-        },
-        admires: {
-            type: Object,
-            required: true
-        },
-        slug: {
-            type: String,
             required: true
         }
     })
 
-    const inDeletionProcess = ref(false)
-    const inCommentProcess = ref(false)
-    let postDate: any = ref(null)
-    postDate.value = parseISO(props.date);
-    postDate.value = formatDistanceToNow(postDate.value, { addSuffix: true });
-    let commentContent: string;
-
-    const checkLikeStatus = () => {
-        if(props.admires) {
-            const admireExist = props.admires?.filter((el: any) => {
+    function manageAdmireStatus() {
+        if(props.post.admires) {
+            const admireExist = props.post.admires?.filter((el: any) => {
                 return String(el.userId.email) === String(user?.value.email);
             });
             if(admireExist != undefined && admireExist.length > 0) {
@@ -139,80 +105,10 @@
         }
     }
 
-    const isLiked = ref(checkLikeStatus());
-
-    const deletePost = async (slug: string) => {
-        inDeletionProcess.value = true
-        const { data: response, error } = await useFetch('/api/post/', {
-            method: 'DELETE',
-            body: {
-                slug
-            },
-            headers: { token: `${Cookies.get("token")}` }
-        })
-        if(error.value) {
-            toast.error(`${error.value?.data}`, {
-                theme: 'dark',
-            })
-            inDeletionProcess.value = false
-        } else {
-            posts.value = posts.value.filter((el: any) => {
-                return el.slug != slug
-            })
-            inDeletionProcess.value = false
-        }
-    }
-
-    const createComment = async (content: string, slug: string) => {
-        inCommentProcess.value = true
-        const { data: response, error } = await useFetch('/api/post/comment/create', {
-            method: 'POST',
-            body: {
-                content: commentContent,
-                slug
-            },
-            headers: { token: `${Cookies.get("token")}` }
-        })
-        if(error.value) {
-            toast.error(`${error.value?.data}`, {
-                theme: 'dark',
-            })
-            inCommentProcess.value = false
-        } else {
-            inCommentProcess.value = false
-            const currentUser = {
-                userId: {
-                    username: user.value.username,
-                    email: user.value.email,
-                    profileImage: user.value.profileImage
-                },
-                content: commentContent
-            }
-            posts.value.map( (el: any) => {
-                if(el.slug === slug) {
-                    return el.comment.push(currentUser)
-                }
-            })
-            commentContent = ''
-        }
-    }
-
-    const checkAdmireStatus = async (slug: string) => {
-        const { data: response, error } = await useFetch('/api/post/admire', {
-            method: 'POST',
-            body: {
-                slug
-            },
-            headers: { token: `${Cookies.get("token")}` }
-        })
-        if(error.value) {
-            toast.error(`${error.value?.data}`, {
-                theme: 'dark',
-            })
-        } else {
-            if(typeof(response.value) === "boolean") {
-                isLiked.value = response.value
-            }
+    async function manageAdmireFunctionResponse(slug: string) {
+        const admireFunctionResponse = await manageAdmire(slug)
+        if(typeof(admireFunctionResponse) === "boolean") {
+            isAdmired.value = admireFunctionResponse
         }
     }
 

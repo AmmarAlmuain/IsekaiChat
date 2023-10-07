@@ -18,9 +18,9 @@ interface IPost extends Document {
   slug: string;
   content: string;
   media?: string;
-  admire?: IAdmire[];
+  admires?: IAdmire[];
   reject?: IReject[];
-  comment?: IComment[];
+  comments?: IComment[];
   created_at: Date;
   updated_at: Date;
   [key: string]: any;

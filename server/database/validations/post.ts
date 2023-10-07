@@ -17,9 +17,9 @@ const VPost = Joi.object({
     userId: Joi.string().required(),
     content: Joi.string().min(3).max(2000).required(),
     media: Joi.string(),
-    admire: Joi.array().items(VAdmire),
+    admires: Joi.array().items(VAdmire),
     reject: Joi.array().items(VReject),
-    comment: Joi.array().items(VComment)
+    comments: Joi.array().items(VComment)
 })
 
 export default VPost;

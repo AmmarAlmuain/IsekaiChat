@@ -12,26 +12,18 @@
                 <div class="flex h-full max-sm:flex-col max-sm:flex max-sm:justify-center max-sm:items-center">
                     <div class="w-full max-w-[384px] h-full flex justify-start items-center px-4 border-l border-r border-white/10">
                         <div class="w-full flex">
-                            <input type="text" name="search" id="search" placeholder="Search..." v-model="query" 
+                            <input type="text" name="search" id="search" placeholder="Search is disabled..."
                                 class="w-full h-8 bg-transparent outline-none px-4 placeholder:text-white/30" />
-                            <button type="submit" @click="searchByAlgolia(query)"
-                                class="rounded-md cursor-pointer flex justify-start px-4 items-center hover:text-emerald-400 transition-all duration-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke="currentColor" class="w-4 h-4">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                                </svg>
+                            <button type="submit"
+                                class="search-btn rounded-md cursor-pointer flex justify-start px-4 items-center hover:text-emerald-400 transition-all duration-300">
+                                <IconsMagnifyingGlass />
                             </button>
                             <div
                                 class="rounded-md cursor-pointer sm:hidden flex justify-start px-4 items-center">
                                 <div class="user-dropdown dropdown dropdown-end">
                                     <label tabindex="0" class="flex justify-center items-center gap-x-2 cursor-pointer">
                                         <div class="hover:text-emerald-400 transition-all duration-300">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                            </svg>
+                                            <IconsDownArrow />
                                         </div>
                                     </label>
                                     <ul tabindex="0"
@@ -52,11 +44,7 @@
                             <label tabindex="0" class="flex justify-center items-center gap-x-2 cursor-pointer">
                                 {{ user?.username }}
                                 <div class="hover:text-emerald-400 transition-all duration-300">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                    </svg>
+                                    <IconsDownArrow />
                                 </div>
                             </label>
                             <ul tabindex="0"
@@ -79,31 +67,7 @@
 
 <script setup lang="ts">
 
-    import Cookies from "js-cookie";
-
-    const user: any = useState("user")
-    const query = ref('')
-
-    const { result, search }: any = useAlgoliaSearch('Posts')
-
-    const searchByAlgolia = async (query: string) => {
-        await search({ query: query, restrictSearchableAttributes: ['content'] })
-        if(query) {
-            const searchedPosts = useState("searchedPosts")
-            searchedPosts.value = result.value.hits
-            console.log(query, searchedPosts.value, result.value.hits)
-        } else {
-            console.log("hi im stupi3d")
-            const searchedPosts = useState("searchedPosts")
-            searchedPosts.value = null
-        }
-    }
-
-    const logout = () => {
-        Cookies.remove('token')
-        const user = useState("user")
-        user.value = undefined
-        navigateTo("/login")
-    }
+    const { logout } = new useAuth()
+    const user = useState("user")
 
 </script>

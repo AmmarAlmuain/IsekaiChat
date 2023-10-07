@@ -19,9 +19,9 @@ const Post = new mongoose.Schema({
     slug: String,
     content: { type: String, required: true },
     media: { type: String },
-    admire: [Admire],
+    admires: [Admire],
     reject: [Reject],
-    comment: [Comment]
+    comments: [Comment]
 }, { timestamps: true } )
 
 export default mongoose.model<IPost>("Post", Post)

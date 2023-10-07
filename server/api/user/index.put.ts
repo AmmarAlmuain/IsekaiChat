@@ -18,20 +18,20 @@ export default defineEventHandler(async (event) => {
   const bodyForValidation = _.omit(body, "profileImage");
   const { error } = VUser.validate( bodyForValidation );
   if(error) {
-      event.node.res.statusCode = 400
+      setResponseStatus(event, 400)
       return error.message
   } else {
     if(body.username) {
       const checkUsername = await User.findOne({ username: body.username })
       if(checkUsername && checkUsername.username != event.context.user.username) {
-        event.node.res.statusCode = 400
+        setResponseStatus(event, 400)
         return "This username is already taken."
       }
     }
     if(body.email) {
       const checkEmail = await User.findOne({ email: body.email })
       if(checkEmail && checkEmail.email != event.context.user.email) {
-        event.node.res.statusCode = 400
+        setResponseStatus(event, 400)
         return "This email is already taken."
       }
     }
@@ -43,23 +43,17 @@ export default defineEventHandler(async (event) => {
     if(updatedUser && !body.email) {
       const user = await User.findOne( { email: event.context.user.email } )
       const userForJwt = {
-        username: user?.username,
-        email: user?.email,
-        profileImage: user?.profileImage
+        userId: user?._id
       }
-      event.node.res.statusCode = 200
       return { token: jwt.sign(userForJwt, config.jwtSecret), user: userForJwt }
     } else if(updatedUser && body.email) {
       const user = await User.findOne( { email: body.email } )
       const userForJwt = {
-        username: user?.username,
-        email: user?.email,
-        profileImage: user?.profileImage
+        userId: user?._id
       }
-      event.node.res.statusCode = 200
       return { token: jwt.sign(userForJwt, config.jwtSecret), user: userForJwt }
     } else {
-      event.node.res.statusCode = 500
+      setResponseStatus(event, 500)
       return "Yikes! Something broke.";
     }
   }
