@@ -1,6 +1,7 @@
 import Post from "../database/models/post";
 import { Server } from "socket.io"
 import mongoose from "mongoose";
+import http from "http"
 
 const retrievePostById = async (postId: string) => {
     const post = await Post.findOne({ _id: postId }).populate({
@@ -19,14 +20,20 @@ const retrievePostById = async (postId: string) => {
 export default async () => {
 
     const config = useRuntimeConfig()
-
-    const io = new Server(3001, {
+    const server = http.createServer();
+    
+    const io = new Server(server, {
         cors: {
             origin: `${config.socketClientUrl}`
         }
     });
 
-    console.log(io.server.url)
+    server.listen(3001, "::", () => {
+        const address = server.address();
+        const serverUrl = `http://[${address?.address}]:${address?.port}`;
+    
+        console.log(`Socket server is running at: ${serverUrl}`);
+    });
 
     const changeStream = Post.watch()
     
