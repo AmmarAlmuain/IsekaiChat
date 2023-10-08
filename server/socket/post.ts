@@ -24,7 +24,7 @@ export default async () => {
     const config = useRuntimeConfig()
     const port = config.port || 5000
     const app = express();
-    app.use(cors)
+    app.use(cors())
     const httpServer = createServer(app);
     const io = new Server(httpServer, {
         cors: {
