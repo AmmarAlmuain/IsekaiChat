@@ -23,6 +23,7 @@ export default async () => {
     const server = http.createServer();
     
     const io = new Server(server, {
+        transports: ['websocket', 'polling'],
         cors: {
             origin: `${config.socketClientUrl}`
         }
