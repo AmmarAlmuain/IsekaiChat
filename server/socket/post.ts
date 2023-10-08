@@ -1,7 +1,9 @@
 import Post from "../database/models/post";
 import { Server } from "socket.io"
 import mongoose from "mongoose";
-import http from "http"
+import { createServer } from "http"
+import express from "express"
+import cors from "cors"
 
 const retrievePostById = async (postId: string) => {
     const post = await Post.findOne({ _id: postId }).populate({
@@ -20,20 +22,27 @@ const retrievePostById = async (postId: string) => {
 export default async () => {
 
     const config = useRuntimeConfig()
-    const server = http.createServer();
-    
-    const io = new Server(server, {
-        transports: ['websocket', 'polling'],
+    const port = config.port || 5000
+    const app = express();
+    app.use(cors)
+    const httpServer = createServer(app);
+    const io = new Server(httpServer, {
         cors: {
-            origin: `*`
+            origin: "*"
         }
     });
-
-    server.listen(3001, "::", () => {
-        const address = server.address();
-        const serverUrl = `http://[${address?.address}]:${address?.port}`;
     
-        console.log(`Socket server is running at: ${serverUrl}`);
+    io.on("connection", (socket) => {
+      // ...
+      console.log(httpServer.address())
+    });
+    
+    httpServer.listen(port, () => {
+        const serverAddress = httpServer.address();
+
+        const serverUrl = `http://${serverAddress?.address}:${serverAddress?.port}`;
+      
+        console.log(`Server is running on URL: ${serverUrl}`);
     });
 
     const changeStream = Post.watch()

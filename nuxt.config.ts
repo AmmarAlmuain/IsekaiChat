@@ -7,6 +7,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     mongoDbUri: process.env.mongoDbUri,
     jwtSecret: process.env.jwtSecret,
+    port: process.env.port,
     socketClientUrl: process.env.VITE_socketClientUrl,
     imageKitPublicKey: process.env.imageKitPublicKey,
     imageKitPrivateKey: process.env.imageKitPrivateKey,
