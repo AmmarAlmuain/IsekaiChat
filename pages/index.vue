@@ -34,12 +34,17 @@
 
 <script setup lang="ts">
 
-    import io from 'socket.io-client'
+    import Pusher from 'pusher-js'
+
+    var pusher = new Pusher(import.meta.env.VITE_pusherKey, {
+        cluster: import.meta.env.VITE_pusherCluster
+    });
+
+    var channel = pusher.subscribe(import.meta.env.VITE_pusherChannel);
 
     const user: any = useState("user"),
           { upload } = new useMedia(),
-          { create: createPost, entirely: entirelyPost } = new usePost(),
-          socket = io(`${import.meta.env.VITE_socketServerUrl}`)
+          { create: createPost, entirely: entirelyPost } = new usePost()
     
     let mediaByInput = ref(),
         posts = ref(await entirelyPost()),
@@ -60,16 +65,16 @@
         return mediaByInput.value = undefined
     }
 
-    socket.on("post:insert", (data) => {
+    channel.bind("post:insert", (data: any) => {
         posts.value.unshift(data)
     })
 
-    socket.on("post:delete", (data) => {
+    channel.bind("post:delete", (data: any) => {
         posts.value = posts.value.filter( (el: { _id: string }) => String(el._id) != String(data)
         )
     })
 
-    socket.on("post:update", (data) => {
+    channel.bind("post:update", (data: any) => {
         const index = posts.value.findIndex((el: { _id: string }) => el._id === data._id);
         posts.value[index] = data;
     })

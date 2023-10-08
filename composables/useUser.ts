@@ -15,6 +15,7 @@ export class useUser {
     }
 
     update = async (body: Object) => {
+        loadingAnimation("save-profile-changes-process", "start")
         const { data: response, error }: any = await useFetch('/api/user', {
             method: 'PUT',
             body: {
@@ -22,6 +23,7 @@ export class useUser {
             },
             headers: { token: `${cookieOperations("get", "token")}` }
         })
+        loadingAnimation("save-profile-changes-process")
         return error.value ? checkError(error.value?.data) : { token: this.replaceToken(response.value.token as string), user: response.value.user }
     }
 

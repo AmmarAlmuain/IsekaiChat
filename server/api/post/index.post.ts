@@ -29,13 +29,13 @@ export default defineEventHandler(async (event) => {
   if(post) {
     const post = await Post.findOne({ slug }).populate({
       path: "userId",
-      select: "username email profileImage",
+      select: "username profileImage",
     }).populate({
       path: "comments.userId",
       select: "username profileImage",
     }).populate({
       path: "admires.userId",
-      select: "email",
+      select: "username",
     })
     return post
   }

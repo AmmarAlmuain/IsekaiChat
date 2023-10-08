@@ -11,7 +11,7 @@
                     <p class="text-sm font-light text-white/50"> {{ formatDate(props.post.createdAt) }} </p>
                 </div>
             </div>
-            <div v-if="user.email == props.user.email"> 
+            <div v-if="user.username == props.user.username"> 
                 <div class="post-dropdown dropdown dropdown-end">
                     <label tabindex="0" class="three-dot-btn hover:text-emerald-400 outline-none transition-all duration-300 flex justify-center items-center gap-x-2 cursor-pointer">
                         <IconsThreeDot />
@@ -95,7 +95,7 @@
     function manageAdmireStatus() {
         if(props.post.admires) {
             const admireExist = props.post.admires?.filter((el: any) => {
-                return String(el.userId.email) === String(user?.value.email);
+                return String(el.userId.username) === String(user?.value.username);
             });
             if(admireExist != undefined && admireExist.length > 0) {
                 return true
