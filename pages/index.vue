@@ -3,35 +3,32 @@
         <div
             class="create-post w-full max-w-[600px] h-auto bg-[#151415] border-[#27272A]  border p-6 rounded-md flex justify-center items-center my-2">
             <div class="w-full h-full gap-y-4 flex flex-col">
-                <div class="p-4 bg-[#30333260] rounded-md">
-                    <div class="contenteditable-textarea resize-none overflow-y-auto outline-none" contenteditable="true" data-placeholder="Type your text here...">
+                <div class="flex gap-x-4 justify-center items-start">
+                    <img :src="user.profileImage" alt="post-img"
+                        class="w-10 h-10 rounded-full mt-2" />
+                    <div contenteditable="true" ref="contentFromDiv" @input="manageContent($event)" class="creat-post cursor-text hover:bg-[#30333275] duration-300 transition-all p-4 bg-[#30333260] rounded-md w-full resize-none overflow-y-auto outline-none" data-placeholder="Where you at? What are you doing?">
                     </div>
                 </div>
                 <div class="post-media" v-if="mediaUrl">
                     <img :src="mediaUrl" alt="post-media" class="rounded-md w-full" />
                 </div>
-                <div class="w-full flex justify-end gap-x-4 rounded-md">
-                    <button v-if="mediaStatus"
-                        class="image-upload-btn rounded-md cursor-pointer hover:text-emerald-400 transition-all duration-300">
+                <div class="w-full flex items-end gap-x-4 rounded-md">
+                    <div>
                         <input id="image-upload" type="file" class="hidden" @change="manageMediaStatus($event)" />
                         <label for="image-upload" class="cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
-                            </svg>
-
+                            <div class="image-upload-btn rounded-md hover:bg-emerald-300/20 active:bg-emerald-500 cursor-pointer flex gap-x-2 justify-center px-6 border border-white/10 py-2 items-center transition-all duration-300">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M9 10C10.1046 10 11 9.10457 11 8C11 6.89543 10.1046 6 9 6C7.89543 6 7 6.89543 7 8C7 9.10457 7.89543 10 9 10Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M2.66992 18.95L7.59992 15.64C8.38992 15.11 9.52992 15.17 10.2399 15.78L10.5699 16.07C11.3499 16.74 12.6099 16.74 13.3899 16.07L17.5499 12.5C18.3299 11.83 19.5899 11.83 20.3699 12.5L21.9999 13.9" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <p> Photo ・ Gif </p>
+                            </div>
                         </label>
-                    </button>
-                    <button v-else
-                    class="image-upload-btn rounded-md cursor-pointer hover:text-emerald-400 transition-all duration-300">
-                        <svg xmlns="http://www.w3.org/2000/svg" @click="manageMediaStatus" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                            class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+                    </div>
                     <button @click="mediaByInput ? createPostWithMedia(mediaByInput) : createPost(content)"
-                        class="rounded-md cursor-pointer flex justify-center px-6 py-1.5 bg-emerald-500 hover:bg-emerald-600 items-center transition-all duration-300">
-                        Share
+                        class="rounded-md cursor-pointer flex gap-x-2 justify-center px-6 hover:bg-emerald-300/20 active:bg-emerald-500 border border-white/10 py-2 items-center transition-all duration-300">
+                        <span id="create-post-process"> Share </span>
                     </button>
                 </div>
             </div>
@@ -58,11 +55,22 @@
         mediaUrl = ref(),
         posts = ref(await entirelyPost()),
         mediaStatus = ref(true),
+        contentFromDiv: any = ref(null),
         content: string;
 
-    const createPostWithMedia = async (mediaByInput: File) => {
+    const manageContent = (event: any) => {
+        content = contentFromDiv?.value?.innerText as string
+        console.log(content)
+    }
+
+    const createPostWithMedia = async (mediaByInputFunc: File) => {
         loadingAnimation("create-post-process", "start")
-        createPost(content, (await upload(mediaByInput as File, generateUuid(), 'postImages')).url as string)
+        createPost(content, (await upload(mediaByInputFunc as File, generateUuid(), 'postImages')).url as string)
+        mediaStatus.value = true
+        mediaUrl.value = null
+        mediaByInput.value = undefined
+        contentFromDiv.value.innerText = ''
+        content = ''
     }
         
     const manageMediaStatus = (event: any) => {

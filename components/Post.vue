@@ -8,7 +8,13 @@
                 </div>
                 <div class="user-username-and-time-side flex flex-col justify-center items-start">
                     <h5 class="text-base font-medium"> {{ props.user.username}} </h5>
-                    <p class="text-sm font-light text-white/50"> {{ formatDate(props.post.createdAt) }} </p>
+                    <div class="flex justify-center items-center text-sm font-light text-white/50">
+                        <p> 
+                            {{ formatDate(props.post.createdAt) }} 
+                        </p>
+                        <p v-if="user.username == props.user.username">・</p>
+                        <span v-if="user.username == props.user.username" id="delete-post-process" class="hover:text-rose-500 cursor-pointer duration-300 transition-all" @click="deletePost(props.post.slug)"> delete post</span>
+                    </div>
                 </div>
             </div>
         </div>
