@@ -102,7 +102,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="absolute top-0 right-0 opacity-0" id="account-dropdown">
+                            <div class="absolute top-0 right-0 opacity-0 pointer-events-none" id="account-dropdown">
                                 <div class="account-dropdown p-2 flex flex-col relative bg-[#292929] translate-y-12">
                                     <span class="absolute h-1 w-full bg-emerald-400 top-0 right-0 rounded-full"></span>
                                     <NuxtLink to="/account">
@@ -180,7 +180,8 @@
         }, {
             opacity: 1,
             y: 10,
-            duration: 0.3
+            duration: 0.3,
+            pointerEvents: "auto"
         })
         let flipIcon = gsap.to(arrowIcon, {
             rotate: 180,
@@ -198,7 +199,8 @@
             }, {
                 opacity: 0,
                 y: 0,
-                duration: 0.3
+                duration: 0.3,
+                pointerEvents: "none"
             })
             let flipIcon = gsap.to(arrowIcon, {
                 rotate: 0,
