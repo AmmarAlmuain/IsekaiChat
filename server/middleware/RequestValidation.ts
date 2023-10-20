@@ -9,9 +9,11 @@ export default defineEventHandler( async (event) => {
 
   if(clientSide) {
     const authPaths = ["/login", "/register"],
+          unsecuredPath = ["/google/callback"],
           authPages = authPaths.includes(event.path),
+          unsecuredPages = unsecuredPath.includes(event.path),
           token = parseCookies(event).token
-    if(authPages && token) {
+    if((authPages && token) || (unsecuredPages && !token)) {
       setResponseStatus(event, 301)
       setResponseHeader(event, "Location", "/")
       event.node.res.end() 

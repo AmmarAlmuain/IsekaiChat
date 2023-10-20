@@ -1,9 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+* {
+    font-family: 'Pixelify Sans', sans-serif;
+}
+
 body  {
     width: 100%;
     min-height: 100vh;
-    background-color: #161616;
+    background-color: #0c0d0c;
 }
+
+[data-placeholder]:empty:before {
+    content: attr(data-placeholder);
+    color: #888;
+    font-style: italic;
+  }
