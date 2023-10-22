@@ -19,7 +19,7 @@ export class useAuth {
     }
 
     loginGoogle = () => {
-        const url = `https://accounts.google.com/o/oauth2/v2/auth?scope=${import.meta.env.VITE_scope}&response_type=${import.meta.env.VITE_responseType}&redirect_uri=${import.meta.env.VITE_redirectUri}&client_id=${import.meta.env.VITE_clientId}`
+        const url = `https://accounts.google.com/o/oauth2/v2/auth?scope=${import.meta.env.VITE_scope}&response_type=${import.meta.env.VITE_responseType}&redirect_uri=${import.meta.env.VITE_redirectUri}&client_id=${import.meta.env.VITE_clientId}&prompt=select_account&nonce=${generateUuid()}`
         navigateTo(url, { external: true })
     }
 

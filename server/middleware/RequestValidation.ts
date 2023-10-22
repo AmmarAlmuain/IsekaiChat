@@ -13,12 +13,14 @@ export default defineEventHandler( async (event) => {
           authPages = authPaths.includes(event.path),
           unsecuredPages = unsecuredPath.includes(event.path),
           token = parseCookies(event).token
-    if((authPages && token) || (unsecuredPages && !token)) {
+    if((unsecuredPages && !token)) {
+    }
+    else if((authPages && token)) {
       setResponseStatus(event, 301)
       setResponseHeader(event, "Location", "/")
       event.node.res.end() 
     }
-    if(!authPages && !token) {
+    else if(!authPages && !token) {
       setResponseStatus(event, 301)
       setResponseHeader(event, "Location", "/login")
       event.node.res.end() 

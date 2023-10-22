@@ -4,9 +4,9 @@
 
         <div class="fixed w-screen h-0 bg-[#111] z-50 hidden opacity-0" id="mobileMenuAnimation">
             <div class="relative w-full">
-                <div class="w-full pr-10 pt-6 absolute flex justify-end right-0" @click="removeMobileMenuAnimation">
-                    <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" class="cursor-pointer hover:text-rose-600 duration-300 transition-all text-white">
-                        <path d="M23 1.69098V3.69098H22V4.69098H21V5.69098H20V6.69098H19V7.69098H18V8.69098H17V9.69098H16V10.691H15V11.691H14V13.691H15V14.691H16V15.691H17V16.691H18V17.691H19V18.691H20V19.691H21V20.691H22V21.691H23V23.691H22V22.691H21V21.691H20V20.691H19V19.691H18V18.691H17V17.691H16V16.691H15V15.691H14V14.691H13V13.691H11V14.691H10V15.691H9V16.691H8V17.691H7V18.691H6V19.691H5V20.691H4V21.691H3V22.691H2V23.691H1V21.691H2V20.691H3V19.691H4V18.691H5V17.691H6V16.691H7V15.691H8V14.691H9V13.691H10V11.691H9V10.691H8V9.69098H7V8.69098H6V7.69098H5V6.69098H4V5.69098H3V4.69098H2V3.69098H1V1.69098H2V2.69098H3V3.69098H4V4.69098H5V5.69098H6V6.69098H7V7.69098H8V8.69098H9V9.69098H10V10.691H11V11.691H13V10.691H14V9.69098H15V8.69098H16V7.69098H17V6.69098H18V5.69098H19V4.69098H20V3.69098H21V2.69098H22V1.69098H23Z" fill="currentColor"/>
+                <div class="w-full pr-7 pt-6 absolute flex justify-end right-0" @click="removeMobileMenuAnimation">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 cursor-pointer hover:text-rose-600 duration-300 transition-all text-white">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </div>
             </div>
@@ -20,7 +20,7 @@
                         </NuxtLink>
                     </div>
                 </div>
-                <div class="nav-element-wrapper py-2 px-4 flex flex-col justify-center items-center text-center">
+                <div class="nav-element-wrapper px-4 flex flex-col justify-center items-center text-center">
                     <div class="nav-element translate-y-full opacity-0">
                             <NuxtLink to="/">
                             <p class="text-5xl mt-4 text-white/30 cursor-pointer flex justify-center items-center gap-x-1">
@@ -30,7 +30,7 @@
                         </NuxtLink>
                     </div>
                 </div>
-                <div class="nav-element-wrapper py-2 px-4 flex flex-col justify-center items-center text-center">
+                <div class="nav-element-wrapper px-4 flex flex-col justify-center items-center text-center">
                     <div class="nav-element translate-y-full opacity-0">
                         <NuxtLink to="/">
                             <p class="text-5xl mt-4 text-white/30 cursor-pointer">
@@ -40,18 +40,18 @@
                         </NuxtLink>
                     </div>
                 </div>
-                <div class="nav-element-wrapper py-2 px-4">
+                <div class="nav-element-wrapper px-4">
                     <div class="nav-element translate-y-full opacity-0">
                         <NuxtLink to="/account" @click="removeMobileMenuAnimation">
-                            <p class="text-5xl mt-4 text-white py-2 px-6 hover:bg-[#80808033] transition-all duration-300 cursor-pointer rounded-md">
+                            <p class="text-5xl mt-4 text-white py-4 px-6 hover:bg-[#80808033] transition-all duration-300 cursor-pointer rounded-md">
                                 Account
                             </p>
                         </NuxtLink>
                     </div>
                 </div>
-                <div class="nav-element-wrapper py-2 px-4" @click="logout">
+                <div class="nav-element-wrapper px-4" @click="logout">
                     <div class="nav-element translate-y-full opacity-0">
-                        <p class="text-5xl mt-4 text-white py-2 px-6 hover:bg-[#80808033] transition-all duration-300 cursor-pointer rounded-md">
+                        <p class="text-5xl mt-4 text-white py-4 px-6 hover:bg-[#80808033] transition-all duration-300 cursor-pointer rounded-md">
                             Logout
                         </p>
                     </div>
@@ -132,9 +132,15 @@
 <script setup lang="ts">
 
     import { gsap } from "gsap"
+import { HtmlHTMLAttributes } from "nuxt/dist/app/compat/capi";
     const type = ref("start")
 
     const mobileMenuAnimation = () => {
+        function stopScroll()  {
+            const element = document.getElementsByTagName("html")[0]
+            element.style.overflow = "hidden"
+        }
+        stopScroll()
         const element = document.getElementById("mobileMenuAnimation") as HTMLDivElement
         const navEles = document.getElementsByClassName("nav-element")
         const tl = gsap.timeline()
@@ -152,6 +158,11 @@
     }
 
     const removeMobileMenuAnimation = () => {
+        function enableScroll()  {
+            const element = (document.getElementsByTagName("html"))[0]
+            element.style.overflow = "auto"
+        }
+        enableScroll()
         const element = document.getElementById("mobileMenuAnimation") as HTMLDivElement
         const navEles = document.getElementsByClassName("nav-element")
         const tl = gsap.timeline()

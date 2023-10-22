@@ -20,8 +20,8 @@ export class usePost {
         return error.value ? checkError(error.value?.data) : response.value
     }
 
-    async delete(slug: string) {
-        loadingAnimation("delete-post-process", "start")
+    async delete(id: string, slug: string) {
+        loadingAnimation(id, "start")
         const { data: response, error } = await useFetch('/api/post', {
             method: 'DELETE',
             body: {
@@ -29,12 +29,12 @@ export class usePost {
             },
             headers: { token: `${cookieOperations("get", "token")}` }
         })
-        loadingAnimation("delete-post-process")
+        loadingAnimation(id)
         return error.value ? checkError(error.value.data) : response.value
     }
 
-    async comment(content: string, slug: string) {
-        loadingAnimation("create-comment-process", "start")
+    async comment(id: string, content: string, slug: string) {
+        loadingAnimation(id, "start")
         const { data: response, error } = await useFetch('/api/post/comment', {
             method: 'POST',
             body: {
@@ -43,7 +43,7 @@ export class usePost {
             },
             headers: { token: `${cookieOperations("get", "token")}` }
         })
-        loadingAnimation("create-comment-process")
+        loadingAnimation(id)
         return error.value ? checkError(error.value.data) : response.value
     }
 

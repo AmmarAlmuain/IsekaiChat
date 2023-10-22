@@ -1,18 +1,15 @@
 <template>
     <div class="gap-6 flex flex-col w-full justify-center items-center" v-if="user && posts">
         <div
-            class="create-post w-full max-w-[600px] h-auto bg-[#151415] border-[#27272A]  border p-6 rounded-md flex justify-center items-center my-2">
+            class="create-post w-full max-w-[600px] h-auto bg-[#151415]  max-sm:rounded-none max-sm:border-l-0 max-sm:border-r-0 max-sm:border-t max-sm:border-b border-[#27272A]  border p-6 rounded-md flex justify-center items-center my-2">
             <div class="w-full h-full gap-y-4 flex flex-col">
                 <div class="flex gap-x-4 justify-center items-start">
                     <img :src="user.profileImage" alt="post-img"
                         class="w-10 h-10 rounded-full mt-2" />
-                    <div contenteditable="true" ref="contentFromDiv" @input="manageContent($event)" class="creat-post cursor-text hover:bg-[#30333275] duration-300 transition-all p-4 bg-[#30333260] rounded-md w-full resize-none overflow-y-auto outline-none" data-placeholder="Where you at? What are you doing?">
+                    <div contenteditable="true" ref="contentFromDiv" @input="manageContent($event)" class="creat-post border border-white/10 cursor-text hover:bg-[#30333275] duration-300 transition-all p-4 bg-[#30333260] rounded-md w-full resize-none overflow-y-auto outline-none" data-placeholder="Where you at? What are you doing?">
                     </div>
                 </div>
-                <div class="post-media" v-if="mediaUrl">
-                    <img :src="mediaUrl" alt="post-media" class="rounded-md w-full" />
-                </div>
-                <div class="w-full flex items-end gap-x-4 rounded-md">
+                <div class="w-full flex items-end gap-x-4 rounded-md flex-wrap gap-y-2">
                     <div v-if="mediaStatus">
                         <input id="image-upload" type="file" class="hidden" @change="manageMediaStatus($event)" />
                         <label for="image-upload" class="cursor-pointer">
@@ -37,13 +34,13 @@
                         </div>
                     </div>
                     <button @click="mediaByInput ? createPostWithMedia(mediaByInput) : createPost(content)"
-                        class="rounded-md cursor-pointer flex gap-x-2 justify-center px-6 hover:bg-emerald-300/20 active:bg-emerald-500 border border-white/10 py-2 items-center transition-all duration-300">
-                        <span id="create-post-process"> Share </span>
+                        class="rounded-md cursor-pointer flex gap-x-2 justify-center px-8 bg-emerald-600 hover:bg-emerald-300/20 active:bg-emerald-600 border border-white/10 py-2 items-center transition-all duration-300">
+                        <span id="create-post-process"> Post </span>
                     </button>
                 </div>
             </div>
         </div>
-        <Post :user="post?.userId" :post="post" v-for="post in posts" :key="post"/>
+        <Post :user="post?.userId" :post="post" :index="index" v-for="(post, index) in posts" :key="post"/>
     </div>
 </template>
 
@@ -76,11 +73,6 @@
     const createPostWithMedia = async (mediaByInputFunc: File) => {
         loadingAnimation("create-post-process", "start")
         createPost(content, (await upload(mediaByInputFunc as File, generateUuid(), 'postImages')).url as string)
-        mediaStatus.value = true
-        mediaUrl.value = null
-        mediaByInput.value = undefined
-        contentFromDiv.value.innerText = ''
-        content = ''
     }
         
     const manageMediaStatus = (event: any) => {

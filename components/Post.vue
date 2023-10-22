@@ -10,10 +10,10 @@
                     <h5 class="text-base font-medium"> {{ props.user.username}} </h5>
                     <div class="flex justify-center items-center text-sm font-light text-white/50">
                         <p> 
-                            {{ formatDate(props.post.createdAt) }} 
+                            {{ formatDate(props.post.createdAt) }}
                         </p>
                         <p v-if="user.username == props.user.username">・</p>
-                        <span v-if="user.username == props.user.username" id="delete-post-process" class="hover:text-rose-500 cursor-pointer duration-300 transition-all" @click="deletePost(props.post.slug)"> delete post</span>
+                        <span v-if="user.username == props.user.username" :id="`delete-comment-process-${index}`" class="hover:text-rose-500 cursor-pointer duration-300 transition-all" @click="deletePost(`delete-comment-process-${index}`, props.post.slug)"> delete post</span>
                     </div>
                 </div>
             </div>
@@ -52,13 +52,13 @@
                 <input type="text"
                     class="w-full h-8 bg-transparent text-sm px-4 outline-none border-none placeholder:text-white/30"
                     placeholder="Add your comment..." v-model="commentContent">
-                <button @click="comment(commentContent, props.post.slug)"
+                <button @click="comment(`create-comment-process-${index}`, commentContent, props.post.slug)"
                     class="create-comment-btn rounded-md cursor-pointer flex justify-center px-6 py-1.5 bg-emerald-500 hover:bg-emerald-600 items-center transition-all duration-300">
-                    <span id="create-comment-process"> Comment  </span>
+                    <span :id="`create-comment-process-${index}`"> Comment  </span>
                 </button>
             </div>
         </div>
-        <div class="all-comments w-full h-full flex flex-col gap-y-1">
+        <div class="all-comments w-full h-full flex flex-col gap-y-1" v-if="$props.post.comments.length != 0">
             <div class="comment w-full gap-x-4 h-full items-center flex rounded-md justify-start px-4 text-left py-2 bg-[#30333260]" v-for="comment in props.post.comments">
                 <div class="w-6 h-full flex justify-start items-center">
                     <img :src="comment.userId.profileImage"
@@ -82,6 +82,7 @@
     const { delete: deletePost, comment, manageAdmire } = new usePost()
     let isAdmired = ref(manageAdmireStatus()),
         commentContent: string;
+    const currentPostUuid = generateUuid()
     
     const props = defineProps({
         user: {
@@ -90,6 +91,10 @@
         },
         post: {
             type: Object,
+            required: true
+        },
+        index: {
+            type: Number,
             required: true
         }
     })
